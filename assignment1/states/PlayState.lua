@@ -135,7 +135,7 @@ function PlayState:render()
     self.bird:render()
 
     if self.pause then
-        love.graphics.draw(PAUSE_ICON, VIRTUAL_WIDTH - 100, VIRTUAL_HEIGHT - 100)
+        love.graphics.draw(PAUSE_ICON, VIRTUAL_WIDTH/2 - 40, VIRTUAL_HEIGHT/2 - 20)
         love.graphics.setFont(flappyFont)
         love.graphics.printf("Press P to Resume", 0, VIRTUAL_HEIGHT/2 - 55, VIRTUAL_WIDTH, 'center')
         BACKGROUND_SCROLL_SPEED = 0

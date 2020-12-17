@@ -10,10 +10,11 @@
 
 PipePair = Class{}
 
--- size of the gap between pipes
-local GAP_HEIGHT = 75 + math.random(-30, 30)
 
 function PipePair:init(y)
+    -- random size of the gap between pipes
+    local GAP_HEIGHT = 120 + math.random(-20,30)
+    
     -- flag to hold whether this pair has been scored (jumped through)
     self.scored = false
 

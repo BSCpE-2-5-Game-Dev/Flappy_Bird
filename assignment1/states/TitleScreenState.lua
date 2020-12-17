@@ -22,5 +22,5 @@ function TitleScreenState:render()
     love.graphics.printf('Floppy Turtle', 0, 64, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setFont(mediumFont)
-    love.graphics.printf('Press ENTER', 0, 100, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Press ENTER', 0, 140, VIRTUAL_WIDTH, 'center')
 end

@@ -139,7 +139,7 @@ function PlayState:render()
     self.bird:render()
 
     if scrolling == false then
-        love.graphics.draw(PAUSE_ICON, VIRTUAL_WIDTH/2 - 40, VIRTUAL_HEIGHT/2 - 20, 0, 2, 2)
+        love.graphics.draw(PAUSE_ICON, VIRTUAL_WIDTH/2 - 112, VIRTUAL_HEIGHT/2 - 112, 0, 3, 3)
         love.graphics.setFont(flappyFont)
         love.graphics.printf('GAME PAUSED', 0, VIRTUAL_HEIGHT / 2 - 14, VIRTUAL_WIDTH, 'center')
         love.graphics.setFont(mediumFont)

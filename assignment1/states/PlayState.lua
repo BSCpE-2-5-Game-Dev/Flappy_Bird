@@ -16,12 +16,12 @@ PIPE_HEIGHT = 288
 
 BIRD_WIDTH = 38
 BIRD_HEIGHT = 24
-<<<<<<< HEAD
+
 -- new variable for random number
 local random_spawn = 0
-=======
+
 PAUSE_ICON = love.graphics.newImage('pause.png')
->>>>>>> Edwin
+
 
 function PlayState:init()
     self.bird = Bird()
@@ -31,60 +31,17 @@ function PlayState:init()
 
     -- initialize our last recorded Y value for a gap placement to base other gaps off of
     self.lastY = -PIPE_HEIGHT + math.random(80) + 20
-    self.pause = false
+    
 end
 
-function PlayState:update(dt)
-<<<<<<< HEAD
-    -- update timer for pipe spawning
-    self.timer = self.timer + dt
-
-    -- spawn a new pipe pair every second and a random between 0 and less than 1
-    if self.timer > 2 + random_spawn then
-        -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
-        -- no higher than 10 pixels below the top edge of the screen,
-        -- and no lower than a gap length (90 pixels) from the bottom
-        local y = math.max(-PIPE_HEIGHT + 10, 
-            math.min(self.lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
-        self.lastY = y
-
-        -- add a new pipe pair at the end of the screen at our new Y
-        table.insert(self.pipePairs, PipePair(y))
-
-        -- reset timer
-        self.timer = 0
-        -- generate random number added to the spwan time of pipes 
-        random_spawn = math.random(0, 1.5)
-    end
-=======
-    
-    -- pause feature: if 'p' key is pressed, then paused
-    if love.keyboard.wasPressed('p') then
-
-        if self.pause then
-            self.pause  = false
-            scrolling   = true
-            BACKGROUND_SCROLL_SPEED = 0
-            GROUND_SCROLL_SPEED = 0
-            sounds['music']:play()
-
-        else
-            self.pause  = true
-            scrolling = false
-            sounds['music']:pause()
->>>>>>> Edwin
-
-        end
-        sounds['pause']:play()
-
-    end
-        
-    if not self.pause then
+function PlayState:update(dt)  
+    -- run the game if scrolling is true  
+    if scrolling then
          -- update timer for pipe spawning
         self.timer = self.timer + dt
 
-        -- spawn a new pipe pair every second and a half
-        if self.timer > 2 then
+        -- spawn a new pipe pair every second plus a variable that return random number between 0 and 1.5
+        if self.timer > 2 + random_spawn then
             -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
             -- no higher than 10 pixels below the top edge of the screen,
             -- and no lower than a gap length (90 pixels) from the bottom
@@ -97,6 +54,8 @@ function PlayState:update(dt)
 
             -- reset timer
             self.timer = 0
+            -- randomize varible
+            random_spawn = math.random(0, 1.5)
         end
 
         -- for every pair of pipes..
@@ -152,6 +111,23 @@ function PlayState:update(dt)
             })
         end
     end
+    
+     -- pause feature: if 'p' key is pressed, then paused
+    if love.keyboard.wasPressed('p') then
+        if scrolling then
+            scrolling   = false
+            BACKGROUND_SCROLL_SPEED = 0
+            GROUND_SCROLL_SPEED = 0
+            sounds['music']:pause()
+            sounds['pause']:play()
+        else
+            scrolling = true
+            sounds['pause']:play()
+            BACKGROUND_SCROLL_SPEED = 30
+            GROUND_SCROLL_SPEED = 60
+            sounds['music']:pause()
+        end
+    end
 end
 
 function PlayState:render()
@@ -162,12 +138,12 @@ function PlayState:render()
 
     self.bird:render()
 
-    if self.pause then
-        love.graphics.draw(PAUSE_ICON, VIRTUAL_WIDTH/2 - 40, VIRTUAL_HEIGHT/2 - 20)
+    if scrolling == false then
+        love.graphics.draw(PAUSE_ICON, VIRTUAL_WIDTH/2 - 40, VIRTUAL_HEIGHT/2 - 20, 0, 2, 2)
         love.graphics.setFont(flappyFont)
-        love.graphics.printf("Press P to Resume", 0, VIRTUAL_HEIGHT/2 - 55, VIRTUAL_WIDTH, 'center')
-        BACKGROUND_SCROLL_SPEED = 0
-        GROUND_SCROLL_SPEED = 0
+        love.graphics.printf('GAME PAUSED', 0, VIRTUAL_HEIGHT / 2 - 14, VIRTUAL_WIDTH, 'center')
+        love.graphics.setFont(mediumFont)
+        love.graphics.printf('Press P to resume game', 0, VIRTUAL_HEIGHT - 40, VIRTUAL_WIDTH, 'center')
     end
 
     love.graphics.setFont(flappyFont)

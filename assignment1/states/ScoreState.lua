@@ -33,24 +33,28 @@ end
 function ScoreState:render()
     -- simply render the score to the middle of the screen
     love.graphics.setFont(flappyFont)
-    love.graphics.printf('Oof! You lost!', 0, 64, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Oof! You hit the pipe!', 0, 64, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setFont(mediumFont)
     love.graphics.printf('Score: ' .. tostring(self.score), 0, 100, VIRTUAL_WIDTH, 'center')
-
-    love.graphics.printf('Press Enter to Play Again!', 0, 160, VIRTUAL_WIDTH, 'center')
     
     local bronze_score = 10
     local silver_score = 20
     local gold_score = 50
+    
     if self.score >= bronze_score and self.score < silver_score then
-        love.graphics.printf('You obtained a bronze medal!', 0, 120, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('You obtained a BRONZE medal!', 0, 120, VIRTUAL_WIDTH, 'center')
         love.graphics.draw(medals['bronze'], VIRTUAL_WIDTH / 2 - 22, VIRTUAL_HEIGHT / 2)
+        love.graphics.printf('Press ENTER to Swim Again!', 0, 240, VIRTUAL_WIDTH, 'center')
     elseif self.score >= silver_score and self.score < gold_score then
-        love.graphics.printf('You obtained a silver medal!', 0, 120, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('You obtained a SILVER medal!', 0, 120, VIRTUAL_WIDTH, 'center')
         love.graphics.draw(medals['silver'], VIRTUAL_WIDTH / 2 - 22, VIRTUAL_HEIGHT / 2)
+        love.graphics.printf('Press ENTER to Swim Again!', 0, 240, VIRTUAL_WIDTH, 'center')
     elseif self.score >= gold_score then
-        love.graphics.printf('You obtained a gold medal!', 0, 120, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('You obtained a GOLD medal!', 0, 120, VIRTUAL_WIDTH, 'center')
         love.graphics.draw(medals['gold'], VIRTUAL_WIDTH / 2 - 22, VIRTUAL_HEIGHT / 2)
+        love.graphics.printf('Press ENTER to Swim Again!', 0, 240, VIRTUAL_WIDTH, 'center')
+    else
+        love.graphics.printf('Press ENTER to Swim Again!', 0, 160, VIRTUAL_WIDTH, 'center')
     end
 end

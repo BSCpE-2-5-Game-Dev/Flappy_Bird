@@ -99,7 +99,11 @@ end
 
 function push:initValues()
   self._PSCALE = self._highdpi and love.window.getDPIScale() or 1
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> Edwin
   self._SCALE = {
     x = self._RWIDTH/self._WWIDTH * self._PSCALE,
     y = self._RHEIGHT/self._WHEIGHT * self._PSCALE

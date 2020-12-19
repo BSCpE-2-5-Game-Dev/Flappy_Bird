@@ -16,8 +16,12 @@ PIPE_HEIGHT = 288
 
 BIRD_WIDTH = 38
 BIRD_HEIGHT = 24
+<<<<<<< HEAD
 -- new variable for random number
 local random_spawn = 0
+=======
+PAUSE_ICON = love.graphics.newImage('pause.png')
+>>>>>>> Edwin
 
 function PlayState:init()
     self.bird = Bird()
@@ -27,9 +31,11 @@ function PlayState:init()
 
     -- initialize our last recorded Y value for a gap placement to base other gaps off of
     self.lastY = -PIPE_HEIGHT + math.random(80) + 20
+    self.pause = false
 end
 
 function PlayState:update(dt)
+<<<<<<< HEAD
     -- update timer for pipe spawning
     self.timer = self.timer + dt
 
@@ -50,70 +56,124 @@ function PlayState:update(dt)
         -- generate random number added to the spwan time of pipes 
         random_spawn = math.random(0, 1.5)
     end
+=======
+    
+    -- pause feature: if 'p' key is pressed, then paused
+    if love.keyboard.wasPressed('p') then
 
-    -- for every pair of pipes..
-    for k, pair in pairs(self.pipePairs) do
-        -- score a point if the pipe has gone past the bird to the left all the way
-        -- be sure to ignore it if it's already been scored
-        if not pair.scored then
-            if pair.x + PIPE_WIDTH < self.bird.x then
-                self.score = self.score + 1
-                pair.scored = true
-                sounds['score']:play()
+        if self.pause then
+            self.pause  = false
+            scrolling   = true
+            BACKGROUND_SCROLL_SPEED = 0
+            GROUND_SCROLL_SPEED = 0
+            sounds['music']:play()
+
+        else
+            self.pause  = true
+            scrolling = false
+            sounds['music']:pause()
+>>>>>>> Edwin
+
+        end
+        sounds['pause']:play()
+
+    end
+        
+    if not self.pause then
+         -- update timer for pipe spawning
+        self.timer = self.timer + dt
+
+        -- spawn a new pipe pair every second and a half
+        if self.timer > 2 then
+            -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
+            -- no higher than 10 pixels below the top edge of the screen,
+            -- and no lower than a gap length (90 pixels) from the bottom
+            local y = math.max(-PIPE_HEIGHT + 10, 
+                math.min(self.lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+            self.lastY = y
+
+            -- add a new pipe pair at the end of the screen at our new Y
+            table.insert(self.pipePairs, PipePair(y))
+
+            -- reset timer
+            self.timer = 0
+        end
+
+        -- for every pair of pipes..
+        for k, pair in pairs(self.pipePairs) do
+            -- score a point if the pipe has gone past the bird to the left all the way
+            -- be sure to ignore it if it's already been scored
+            if not pair.scored then
+                if pair.x + PIPE_WIDTH < self.bird.x then
+                    self.score = self.score + 1
+                    pair.scored = true
+                    sounds['score']:play()
+                end
+            end
+
+            -- update position of pair
+            pair:update(dt)
+        end
+
+        -- we need this second loop, rather than deleting in the previous loop, because
+        -- modifying the table in-place without explicit keys will result in skipping the
+        -- next pipe, since all implicit keys (numerical indices) are automatically shifted
+        -- down after a table removal
+        for k, pair in pairs(self.pipePairs) do
+            if pair.remove then
+                table.remove(self.pipePairs, k)
             end
         end
 
-        -- update position of pair
-        pair:update(dt)
-    end
+        -- simple collision between bird and all pipes in pairs
+        for k, pair in pairs(self.pipePairs) do
+            for l, pipe in pairs(pair.pipes) do
+                if self.bird:collides(pipe) then
+                    sounds['explosion']:play()
+                    sounds['hurt']:play()
 
-    -- we need this second loop, rather than deleting in the previous loop, because
-    -- modifying the table in-place without explicit keys will result in skipping the
-    -- next pipe, since all implicit keys (numerical indices) are automatically shifted
-    -- down after a table removal
-    for k, pair in pairs(self.pipePairs) do
-        if pair.remove then
-            table.remove(self.pipePairs, k)
-        end
-    end
-
-    -- simple collision between bird and all pipes in pairs
-    for k, pair in pairs(self.pipePairs) do
-        for l, pipe in pairs(pair.pipes) do
-            if self.bird:collides(pipe) then
-                sounds['explosion']:play()
-                sounds['hurt']:play()
-
-                gStateMachine:change('score', {
-                    score = self.score
-                })
+                    gStateMachine:change('score', {
+                        score = self.score
+                    })
+                end
             end
         end
-    end
 
-    -- update bird based on gravity and input
-    self.bird:update(dt)
+        -- update bird based on gravity and input
+        self.bird:update(dt)
 
-    -- reset if we get to the ground
-    if self.bird.y > VIRTUAL_HEIGHT - 15 then
-        sounds['explosion']:play()
-        sounds['hurt']:play()
+        -- reset if we get to the ground
+        if self.bird.y > VIRTUAL_HEIGHT - 15 then
+            sounds['explosion']:play()
+            sounds['hurt']:play()
 
-        gStateMachine:change('score', {
-            score = self.score
-        })
+            gStateMachine:change('score', {
+                score = self.score
+            })
+        end
     end
 end
 
 function PlayState:render()
+
     for k, pair in pairs(self.pipePairs) do
         pair:render()
+    end
+
+    self.bird:render()
+
+    if self.pause then
+        love.graphics.draw(PAUSE_ICON, VIRTUAL_WIDTH/2 - 40, VIRTUAL_HEIGHT/2 - 20)
+        love.graphics.setFont(flappyFont)
+        love.graphics.printf("Press P to Resume", 0, VIRTUAL_HEIGHT/2 - 55, VIRTUAL_WIDTH, 'center')
+        BACKGROUND_SCROLL_SPEED = 0
+        GROUND_SCROLL_SPEED = 0
     end
 
     love.graphics.setFont(flappyFont)
     love.graphics.print('Score: ' .. tostring(self.score), 8, 8)
 
-    self.bird:render()
+    
 end
 
 --[[
